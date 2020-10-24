@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
@@ -66,25 +68,60 @@ public class MuestraFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_muestra, container, false);
 
-        ArrayList<String> terminos = new ArrayList<>();
+        final ArrayList<String> terminos = new ArrayList<>();
+        terminos.add("La plataforma Android");
         terminos.add("SDK de Android");
+        terminos.add("Google Play");
         terminos.add("Arquitectura de Android");
         terminos.add("Java API Framework");
-        terminos.add("Android Runtime");
+        terminos.add("Java Native C/C++ Libraries");
         terminos.add("Hardware Abstraction Layer (HAL)");
-        terminos.add("Kernel de Linux");
-        terminos.add("Intents");
+
+        final ArrayList<String> infoTerminos = new ArrayList<>();
+        infoTerminos.add("La plataforma Android está compuesta de un núcleo abierto, AOSP (Android Open Source Project), más los servicios y aplicaciones de Google que quedan bajo su regulación.");
+        infoTerminos.add("El SDK de Android, provee de herramientas y APIs necesarios para comenzar a desarrollar aplicaciones en a plataforma Android.");
+        infoTerminos.add("Es un catálogo de aplicaciones gratuitas o de pago.");
+        infoTerminos.add("La arquitectura está diseñada para simplificar el re uso de componentes; cualquier aplicación puede publicar sus capacidades y cualquier otra aplicación puede luego hacer uso de esas capacidades sujeto a reglas de seguridad del framework.");
+        infoTerminos.add("Todo el conjunto de funciones del SO Android está disponible mediante API escritas en el lenguaje Java. Estas API son los cimientos que necesitas para crear apps de Android simplificando la reutilización de componentes del sistema y servicios centrales y modulares.");
+        infoTerminos.add("Muchos componentes y servicios centrales del sistema Android, como el ART y la HAL, se basan en código nativo que requiere bibliotecas nativas escritas en C y C++.");
+        infoTerminos.add("La capa de abstracción de hardware (HAL) brinda interfaces estándares que exponen las capacidades de hardware del dispositivo al framework de la Java API de nivel más alto.");
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, terminos);
 
         ListView infoLV = (ListView)view.findViewById(R.id.infoLV);
         infoLV.setAdapter(adapter);
+        infoLV.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                InfoTerminosFragment detailFragment = new InfoTerminosFragment();
+                String selectedData = infoTerminos.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putString("selected_data", selectedData);
 
+                detailFragment.setArguments(bundle);
+                FragmentManager manager = getFragmentManager();
 
+                switch (MainActivity.posicion2){
 
-        // Inflate the layout for this fragment
+                    case 1:
+                        manager.beginTransaction().replace(R.id.mainLayout, detailFragment).addToBackStack(null).commit();
+                        break;
+
+                    case 2:
+                        manager.beginTransaction().replace(R.id.infoTerminosLy, detailFragment).commit();
+                        break;
+
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + MainActivity.posicion2);
+                }
+            }
+        });
+
         return view;
-
     }
+
 }
